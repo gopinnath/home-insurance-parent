@@ -24,10 +24,11 @@ public class Controller {
 	@Autowired
 	private UserService service;
 			
-	@GetMapping("/{username}")
-	public HomeOwnerEntity getUserByUsername(@PathVariable String username)	{
+	@GetMapping("/userdetails")
+	public HomeOwnerEntity getUserByUsername() {
+		String userName = service.getLoggedInUser();
 		LOGGER.info("Inside getUserByUsername");
-		return service.getHomeOwnerByUsername(username);
+		return service.getHomeOwnerByUsername(userName);
 	}
 	
 	@PostMapping("/")
@@ -37,7 +38,7 @@ public class Controller {
 	}
 	
 	@PostMapping("/login")
-	public Boolean login(@RequestParam String username,@RequestParam String password)	{
+	public String login(@RequestParam String username,@RequestParam String password)	{
 		LOGGER.info("Inside login");
 		return service.login(username, password);
 	}

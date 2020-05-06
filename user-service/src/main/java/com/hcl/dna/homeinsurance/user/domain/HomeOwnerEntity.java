@@ -65,27 +65,6 @@ public class HomeOwnerEntity {
 			return user.getUserId();
 		}
 		
-		public boolean loginHomeOwner(String username, String password)	{
-			String authenticationFailureMessage = null;
-			Optional<User> user = userRepo.findByUsername(username);
-			if(user.isPresent())	{
-				if(user.get().getPassword() != null && user.get().getPassword().equals(password))	{
-					// Do nothing, assume login successful.
-				}	else	{
-					authenticationFailureMessage = "Username and Password does not match";
-					LOGGER.info(authenticationFailureMessage);
-					return false;
-				}
-				
-			} else	{
-				authenticationFailureMessage = String.format("User %s not found",username);
-				LOGGER.info(authenticationFailureMessage);
-				return false;
-			}
-			
-			return true;
-		}
-		
 		public void updatePersonalInformation(HomeOwnerEntity homeOwner)	{
 			PersonalInfomationVO personalInfo = homeOwner.getPersonalInformation();
 			HomeOwner dbHomeOwner = new HomeOwner();
