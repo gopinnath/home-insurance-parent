@@ -1,9 +1,19 @@
-package com.hcl.dna.homeinsurance.quote.service;
+package com.hcl.homeinsurance.quote.service;
 
-import com.hcl.dna.homeinsurance.quote.domain.QuoteEntity;
+import org.springframework.stereotype.Service;
 
+import com.hcl.homeinsurance.quote.domain.CoverageEntity;
+import com.hcl.homeinsurance.quote.dto.Response;
+import com.hcl.homeinsurance.quote.exception.QuoteException;
+import com.hcl.homeinsurance.quote.exception.SaveException;
+
+@Service
 public interface QuoteService {
-	
-	public QuoteEntity getQuoteByUserId(Long userId);
+
+	Response<?> calculateCoverageDetails(long propertyId);
+
+	Response<?> saveQuote(CoverageEntity coverageEntity) throws SaveException;
+
+	Response<?> getQuote(long propertyId) throws QuoteException;
 	
 }
