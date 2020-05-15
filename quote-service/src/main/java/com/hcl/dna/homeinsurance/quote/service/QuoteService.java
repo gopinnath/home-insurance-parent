@@ -1,11 +1,11 @@
-package com.hcl.homeinsurance.quote.service;
+package com.hcl.dna.homeinsurance.quote.service;
 
 import org.springframework.stereotype.Service;
 
-import com.hcl.homeinsurance.quote.domain.CoverageEntity;
-import com.hcl.homeinsurance.quote.dto.Response;
-import com.hcl.homeinsurance.quote.exception.QuoteException;
-import com.hcl.homeinsurance.quote.exception.SaveException;
+import com.hcl.dna.homeinsurance.quote.domain.CoverageEntity;
+import com.hcl.dna.homeinsurance.quote.dto.Response;
+import com.hcl.dna.homeinsurance.quote.exception.QuoteException;
+import com.hcl.dna.homeinsurance.quote.exception.SaveException;
 
 @Service
 public interface QuoteService {

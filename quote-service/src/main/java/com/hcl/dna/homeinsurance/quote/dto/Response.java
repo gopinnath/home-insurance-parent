@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.hcl.homeinsurance.quote.dto;
+package com.hcl.dna.homeinsurance.quote.dto;
 
 import lombok.AllArgsConstructor;
 

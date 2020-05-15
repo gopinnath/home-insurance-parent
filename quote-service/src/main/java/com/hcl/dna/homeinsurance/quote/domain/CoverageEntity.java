@@ -1,13 +1,13 @@
-package com.hcl.homeinsurance.quote.domain;
+package com.hcl.dna.homeinsurance.quote.domain;
 
 import java.util.Calendar;
 
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hcl.homeinsurance.quote.dto.PropertyEntity;
-import com.hcl.homeinsurance.quote.dto.Response;
-import com.hcl.homeinsurance.quote.repository.QuoteRepository;
+import com.hcl.dna.homeinsurance.quote.dto.PropertyEntity;
+import com.hcl.dna.homeinsurance.quote.dto.Response;
+import com.hcl.dna.homeinsurance.quote.repository.QuoteRepository;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

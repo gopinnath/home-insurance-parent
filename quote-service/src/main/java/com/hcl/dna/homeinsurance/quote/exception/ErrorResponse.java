@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.hcl.homeinsurance.quote.exception;
+package com.hcl.dna.homeinsurance.quote.exception;
 
 /**
  * @author Prateek

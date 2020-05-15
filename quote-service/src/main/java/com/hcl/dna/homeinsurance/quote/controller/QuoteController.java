@@ -1,4 +1,4 @@
-package com.hcl.homeinsurance.quote.controller;
+package com.hcl.dna.homeinsurance.quote.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcl.homeinsurance.quote.domain.CoverageEntity;
-import com.hcl.homeinsurance.quote.dto.Response;
-import com.hcl.homeinsurance.quote.exception.QuoteException;
-import com.hcl.homeinsurance.quote.exception.SaveException;
-import com.hcl.homeinsurance.quote.service.QuoteService;
+import com.hcl.dna.homeinsurance.quote.domain.CoverageEntity;
+import com.hcl.dna.homeinsurance.quote.dto.Response;
+import com.hcl.dna.homeinsurance.quote.exception.QuoteException;
+import com.hcl.dna.homeinsurance.quote.exception.SaveException;
+import com.hcl.dna.homeinsurance.quote.service.QuoteService;
 
 @RestController
-@RequestMapping("api/quote")
+@RequestMapping("api/quotes")
 public class QuoteController {
 	
 	  @Autowired QuoteService quoteService;

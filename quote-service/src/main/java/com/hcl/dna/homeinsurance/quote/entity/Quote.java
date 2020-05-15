@@ -1,4 +1,4 @@
-package com.hcl.homeinsurance.quote.entity;
+package com.hcl.dna.homeinsurance.quote.entity;
 
 import javax.persistence.Column;
 

@@ -1,4 +1,4 @@
-package com.hcl.homeinsurance.quote.repository;
+package com.hcl.dna.homeinsurance.quote.repository;
 
 
 
@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.stereotype.Repository;
 
-import com.hcl.homeinsurance.quote.entity.Quote;
+import com.hcl.dna.homeinsurance.quote.entity.Quote;
 
 
 

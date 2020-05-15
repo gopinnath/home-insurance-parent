@@ -1,4 +1,4 @@
-package com.hcl.homeinsurance.quote.utility;
+package com.hcl.dna.homeinsurance.quote.utility;
 
 public class QuoteUtility {
 	private QuoteUtility() {

@@ -1,13 +1,13 @@
-package com.hcl.homeinsurance.quote.domain;
+package com.hcl.dna.homeinsurance.quote.domain;
 
 import java.util.Optional;
 
-import com.hcl.homeinsurance.quote.dto.Response;
-import com.hcl.homeinsurance.quote.entity.Quote;
-import com.hcl.homeinsurance.quote.exception.QuoteException;
-import com.hcl.homeinsurance.quote.exception.SaveException;
-import com.hcl.homeinsurance.quote.repository.QuoteRepository;
-import com.hcl.homeinsurance.quote.utility.QuoteUtility;
+import com.hcl.dna.homeinsurance.quote.dto.Response;
+import com.hcl.dna.homeinsurance.quote.entity.Quote;
+import com.hcl.dna.homeinsurance.quote.exception.QuoteException;
+import com.hcl.dna.homeinsurance.quote.exception.SaveException;
+import com.hcl.dna.homeinsurance.quote.repository.QuoteRepository;
+import com.hcl.dna.homeinsurance.quote.utility.QuoteUtility;
 
 import lombok.Getter;
 import lombok.Setter;

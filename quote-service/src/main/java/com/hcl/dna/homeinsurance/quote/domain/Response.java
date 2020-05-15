@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.hcl.homeinsurance.quote.domain;
+package com.hcl.dna.homeinsurance.quote.domain;
 
 import lombok.AllArgsConstructor;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.hcl.homeinsurance.quote.exception;
+package com.hcl.dna.homeinsurance.quote.exception;
 
 import org.springframework.http.HttpStatus;
 
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.hcl.homeinsurance.quote.utility.QuoteUtility;
+import com.hcl.dna.homeinsurance.quote.utility.QuoteUtility;
 
 /**
  * @author User1

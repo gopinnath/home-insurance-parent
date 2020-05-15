@@ -1,4 +1,4 @@
-package com.hcl.homeinsurance.quote.exception;
+package com.hcl.dna.homeinsurance.quote.exception;
 
 public class QuoteException extends Exception {
 	/**
