@@ -3,6 +3,13 @@ package com.hcl.dna.homeinsurance.user;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,10 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hcl.dna.homeinsurance.user.auth.JwtTokenUtil;
 import com.hcl.dna.homeinsurance.user.domain.HomeOwnerEntity;
+import com.hcl.dna.homeinsurance.user.domain.JwtResponse;
 import com.hcl.dna.homeinsurance.user.domain.LoginDto;
 import com.hcl.dna.homeinsurance.user.domain.RegisterModel;
 import com.hcl.dna.homeinsurance.user.service.UserService;
+import com.hcl.dna.homeinsurance.user.service.UserServiceImplementation;
 
 @RestController
 @RequestMapping("api/users")
@@ -24,40 +34,67 @@ public class Controller {
 	private final Logger LOGGER = Logger.getLogger(Controller.class.getName());
 
 	@Autowired
-	private UserService service;
+	private AuthenticationManager authenticationManager;
 
-	@GetMapping("/userdetails")
-	public HomeOwnerEntity getUserByUsername() {
-		String userName = service.getLoggedInUser();
-		LOGGER.info("Inside getUserByUsername");
-		return service.getHomeOwnerByUsername(userName);
-	}
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
 
-	@PostMapping("/register")
-	public Long registerUser(@RequestBody RegisterModel register) {
+	@Autowired
+	private UserService userDetailsService;
 
-		// @RequestParam String username, @RequestParam String password
+	@Autowired
+	private UserServiceImplementation userServiceImpl;
 
-		String username = register.getUsername();
-		String password = register.getPassword();
+	@PostMapping(value = "/register")
+	public Long registerUser(@RequestBody RegisterModel registerModel) throws Exception {
 		LOGGER.info("Inside registerUser");
-		return service.register(username, password);
+		return userDetailsService.saveRegisterInfo(registerModel);
 	}
 
-	@PostMapping("/login")
-	public String login(@RequestBody LoginDto loginDto) {
+	@GetMapping("/user/info")
+	public UserDetails getUserDetails() {
+		String username = userDetailsService.getLoggedInUser();
+		LOGGER.info("Inside getUserByUsername");
+		return userServiceImpl.loadUserByUsername(username);
 
-		String username = loginDto.getUsername();
-		String password = loginDto.getPassword();
+	}
 
-		// @RequestParam String username,@RequestParam String password
+	@PostMapping(value = "/login")
+	public ResponseEntity<?> loginAuthentication(@RequestBody LoginDto loginDto) throws Exception {
 		LOGGER.info("Inside login");
-		return service.login(username, password);
+
+		authenticate(loginDto.getUsername(), loginDto.getPassword());
+
+		final UserDetails userDetails = this.userServiceImpl.loadUserByUsername(loginDto.getUsername());
+
+		final String token = jwtTokenUtil.generateToken(userDetails);
+
+		return ResponseEntity.ok(new JwtResponse(token));
 	}
 
 	@PatchMapping(path = "/{username}")
 	public void updatePersonalInfo(@PathVariable String username, @RequestBody HomeOwnerEntity homeOwner) {
 		LOGGER.info("Inside updatePersonalInfo");
-		service.updatePersonalInformation(homeOwner);
+		userDetailsService.updatePersonalInformation(homeOwner);
 	}
+
+	@GetMapping("/userdetails")
+	public HomeOwnerEntity getUserByUsername() {
+		String userName = userDetailsService.getLoggedInUser();
+		LOGGER.info("Inside getUserByUsername");
+		return userDetailsService.getHomeOwnerByUsername(userName);
+	}
+
+	private void authenticate(String username, String password) throws Exception {
+
+		LOGGER.info("Auth validation in Controller class");
+		try {
+			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+		} catch (DisabledException e) {
+			throw new Exception("USER_DISABLED", e);
+		} catch (BadCredentialsException e) {
+			throw new Exception("INVALID_CREDENTIALS", e);
+		}
+	}
+
 }

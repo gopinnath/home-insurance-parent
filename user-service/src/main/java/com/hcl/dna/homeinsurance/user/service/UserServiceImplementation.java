@@ -17,63 +17,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hcl.dna.homeinsurance.user.domain.HomeOwnerEntity;
+import com.hcl.dna.homeinsurance.user.domain.PersonalInfomationVO;
+import com.hcl.dna.homeinsurance.user.domain.RegisterModel;
+import com.hcl.dna.homeinsurance.user.jpa.HomeOwner;
 import com.hcl.dna.homeinsurance.user.jpa.HomeOwnerRepository;
 import com.hcl.dna.homeinsurance.user.jpa.User;
 import com.hcl.dna.homeinsurance.user.jpa.UserRepository;
 import com.hcl.dna.homeinsurance.user.auth.JwtTokenUtil;
 
 @Service
-public class UserServiceImplementation implements UserService,UserDetailsService { 
+public class UserServiceImplementation implements UserService, UserDetailsService {
 
 	private final Logger LOGGER = Logger.getLogger(UserServiceImplementation.class.getName());
-	
+
 	@Autowired
-	private HomeOwnerRepository homeOwnerRepo;
-	
-	@Autowired
-	private UserRepository userRepo;
-	
+	UserRepository userRepo;
+
 	@Autowired
 	private PasswordEncoder bcryptEncoder;
-	
-	@Autowired
-	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
-	
-	@Override
-	public HomeOwnerEntity getHomeOwnerByUsername(String username) {
-		LOGGER.info(" getHomeOwnerByUsername " + username);
-		return HomeOwnerEntity.newFactory(homeOwnerRepo,userRepo).buildFromDBByUserName(username);
-	}
+	private HomeOwnerRepository homeOwnerRepo;
 
 	@Override
-	public String login(String username, String password){
-		authenticate(username, password);
-		final UserDetails userDetails = loadUserByUsername(username);
-		return jwtTokenUtil.generateToken(userDetails);
-	}
-
-	@Override
-	public Long register(String username, String password) {
-		LOGGER.info(" register " + username);
-		String encodedPassword = bcryptEncoder.encode(password);
-		return HomeOwnerEntity.newFactory(homeOwnerRepo,userRepo).registerHomeOwner(username,encodedPassword);
-	}
-
-	@Override
-	public void updatePersonalInformation(HomeOwnerEntity homeOwner) {
-		LOGGER.info(" updatePersonalInformation " + homeOwner);
-		HomeOwnerEntity.newFactory(homeOwnerRepo,userRepo).updatePersonalInformation(homeOwner);
-	}
-	
-	@Override
-	public String getLoggedInUser()
-	{
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String username = ((UserDetails) principal).getUsername().toString();
-		return username;
+	public String login(String username, String password) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -86,14 +55,77 @@ public class UserServiceImplementation implements UserService,UserDetailsService
 				user.get().getPassword(), new ArrayList<>());
 	}
 
+	@Override
+	public Long saveRegisterInfo(RegisterModel registerModel) {
+		User user = new User();
+		user.setUsername(registerModel.getUsername());
+		user.setPassword(bcryptEncoder.encode(registerModel.getPassword()));
 
-	private void authenticate(String username, String password){
-		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-		} catch (DisabledException e) {
-			throw new RuntimeException("USER_DISABLED", e);
-		} catch (BadCredentialsException e) {
-			throw new RuntimeException("INVALID_CREDENTIALS", e);
-		}
+		userRepo.save(user);
+
+		return user.getUserId();
 	}
+
+	@Override
+	public String getLoggedInUser() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String username = ((UserDetails) principal).getUsername().toString();
+		return username;
+	}
+
+	@Override
+	public void updatePersonalInformation(HomeOwnerEntity homeOwner) {
+		PersonalInfomationVO personalInfo = homeOwner.getPersonalInformation();
+		HomeOwner dbHomeOwner = new HomeOwner();
+		dbHomeOwner.setUsername(homeOwner.getUsername());
+		dbHomeOwner.setFirstName(personalInfo.getFirstName());
+		dbHomeOwner.setLastName(personalInfo.getLastName());
+		dbHomeOwner.setEmail(personalInfo.getEmail());
+		dbHomeOwner.setDateOfBirth(personalInfo.getDateOfBirth());
+		dbHomeOwner.setSocialSecurityNumber(personalInfo.getSocialSecurityNumber());
+		dbHomeOwner.setAreYouRetired(personalInfo.getHasRetired() ? "Y" : "N");
+		homeOwnerRepo.save(dbHomeOwner);
+
+	}
+
+	@Override
+	public HomeOwnerEntity getHomeOwnerByUsername(String username) {
+		Optional<User> userObj = userRepo.findByUsername(username);
+
+		if (!userObj.isPresent()) {
+			return null;
+		}
+		/*
+		 * if(userObj.isEmpty()) { return null; }
+		 */
+
+		Optional<HomeOwner> homeOwnerObj = homeOwnerRepo.findByUsername(username);
+		HomeOwner homeOwner = null;
+		if (homeOwnerObj.isPresent()) {
+			homeOwner = homeOwnerObj.get();
+		}
+
+		return buildHomeOwnerEntity(userObj.get(), homeOwner);
+	}
+
+	private HomeOwnerEntity buildHomeOwnerEntity(User user, HomeOwner homeOwner) {
+		HomeOwnerEntity entity = new HomeOwnerEntity();
+		entity.setUsername(user.getUsername());
+		entity.setUserId(user.getUserId());
+
+		if (homeOwner != null) {
+			Boolean retiredFlag = false;
+			if (homeOwner.getAreYouRetired() != null && "Y".equals(homeOwner.getAreYouRetired())) {
+				retiredFlag = true;
+			}
+			PersonalInfomationVO personalInfo = PersonalInfomationVO.builder().firstName(homeOwner.getFirstName())
+					.lastName(homeOwner.getLastName()).email(homeOwner.getEmail())
+					.dateOfBirth(homeOwner.getDateOfBirth()).socialSecurityNumber(homeOwner.getSocialSecurityNumber())
+					.hasRetired(retiredFlag).build();
+			entity.setPersonalInformation(personalInfo);
+		}
+
+		return entity;
+	}
+
 }

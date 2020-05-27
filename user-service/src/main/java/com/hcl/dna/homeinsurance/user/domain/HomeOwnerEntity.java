@@ -47,8 +47,9 @@ public class HomeOwnerEntity {
 			if (!userObj.isPresent()) {
 				return null;
 			}
+
 			/*
-			 * if(userObj.isEmpty()) { return null; }
+			 * if (userObj.isEmpty()) { return null; }
 			 */
 
 			Optional<HomeOwner> homeOwnerObj = homeOwnerRepo.findByUsername(username);
