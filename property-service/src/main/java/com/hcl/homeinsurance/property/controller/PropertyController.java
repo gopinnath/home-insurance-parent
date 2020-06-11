@@ -29,13 +29,13 @@ public class PropertyController {
 	@GetMapping("/")
 	public ResponseEntity<Response<?>> getAllPropertyDetail() throws PropertyNotFoundException
 	{
-		return new ResponseEntity<>(propertyService.getAllProperty(),HttpStatus.FOUND);
+		return new ResponseEntity<>(propertyService.getAllProperty(),HttpStatus.OK);
 	}
 	
 	@GetMapping("/{propertyId}")
 	public ResponseEntity<Response<?>> getPropertyDetailById(@PathVariable("propertyId") long propertyId) throws PropertyNotFoundException
 	{
-		return new ResponseEntity<>(propertyService.getPropertyDetailById(propertyId),HttpStatus.FOUND);
+		return new ResponseEntity<>(propertyService.getPropertyDetailById(propertyId),HttpStatus.OK);
 	}
 	
 	@PostMapping()
