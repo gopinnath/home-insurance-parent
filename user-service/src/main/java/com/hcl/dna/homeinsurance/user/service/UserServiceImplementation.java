@@ -2,7 +2,6 @@ package com.hcl.dna.homeinsurance.user.service;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,8 +21,6 @@ import com.hcl.dna.homeinsurance.user.jpa.UserRepository;
 
 @Service
 public class UserServiceImplementation implements UserService, UserDetailsService {
-
-	private final Logger LOGGER = Logger.getLogger(UserServiceImplementation.class.getName());
 
 	@Autowired
 	UserRepository userRepo;
@@ -74,10 +71,18 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 			dbHomeOwner.setDateOfBirth(personalInfo.getDateOfBirth());
 			dbHomeOwner.setSocialSecurityNumber(personalInfo.getSocialSecurityNumber());
 			dbHomeOwner.setAreYouRetired(personalInfo.getHasRetired() ? "Y" : "N");
-			homeOwnerRepo.save(dbHomeOwner);			
+			homeOwnerRepo.save(dbHomeOwner);
+		}	else	{
+			HomeOwner dbHomeOwner = new HomeOwner();
+			dbHomeOwner.setUsername(homeOwner.getUsername());
+			dbHomeOwner.setFirstName(personalInfo.getFirstName());
+			dbHomeOwner.setLastName(personalInfo.getLastName());
+			dbHomeOwner.setEmail(personalInfo.getEmail());
+			dbHomeOwner.setDateOfBirth(personalInfo.getDateOfBirth());
+			dbHomeOwner.setSocialSecurityNumber(personalInfo.getSocialSecurityNumber());
+			dbHomeOwner.setAreYouRetired(personalInfo.getHasRetired() ? "Y" : "N");
+			homeOwnerRepo.save(dbHomeOwner);
 		}
-		LOGGER.info("Could Not Update :" + homeOwner.getUsername());
-		throw new RuntimeException("User Not Found");
 	}
 
 	@Override

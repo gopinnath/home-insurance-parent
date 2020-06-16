@@ -25,6 +25,9 @@ import com.hcl.dna.homeinsurance.user.domain.RegisterModel;
 import com.hcl.dna.homeinsurance.user.service.UserService;
 import com.hcl.dna.homeinsurance.user.service.UserServiceImplementation;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
+
 @RestController
 @RequestMapping("api/users")
 public class Controller {
@@ -49,6 +52,7 @@ public class Controller {
 		return userDetailsService.saveRegisterInfo(registerModel);
 	}
 
+	@ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
 	@GetMapping("/user/info")
 	public UserDetails getUserDetails() {
 		String username = userDetailsService.getLoggedInUser();
@@ -70,12 +74,14 @@ public class Controller {
 		return ResponseEntity.ok(new JwtResponse(token));
 	}
 
+	@ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
 	@PatchMapping(path = "/{username}")
 	public void updatePersonalInfo(@PathVariable String username, @RequestBody HomeOwnerEntity homeOwner) {
 		LOGGER.info("Inside updatePersonalInfo");
 		userDetailsService.updatePersonalInformation(homeOwner);
 	}
 
+	@ApiOperation(value = "", authorizations = { @Authorization(value="jwtToken") })
 	@GetMapping("/userdetails")
 	public HomeOwnerEntity getUserByUsername() {
 		String userName = userDetailsService.getLoggedInUser();
