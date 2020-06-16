@@ -5,10 +5,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,7 +19,6 @@ import com.hcl.dna.homeinsurance.user.jpa.HomeOwner;
 import com.hcl.dna.homeinsurance.user.jpa.HomeOwnerRepository;
 import com.hcl.dna.homeinsurance.user.jpa.User;
 import com.hcl.dna.homeinsurance.user.jpa.UserRepository;
-import com.hcl.dna.homeinsurance.user.auth.JwtTokenUtil;
 
 @Service
 public class UserServiceImplementation implements UserService, UserDetailsService {
@@ -38,12 +33,6 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 
 	@Autowired
 	private HomeOwnerRepository homeOwnerRepo;
-
-	@Override
-	public String login(String username, String password) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -76,16 +65,19 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 	@Override
 	public void updatePersonalInformation(HomeOwnerEntity homeOwner) {
 		PersonalInfomationVO personalInfo = homeOwner.getPersonalInformation();
-		HomeOwner dbHomeOwner = new HomeOwner();
-		dbHomeOwner.setUsername(homeOwner.getUsername());
-		dbHomeOwner.setFirstName(personalInfo.getFirstName());
-		dbHomeOwner.setLastName(personalInfo.getLastName());
-		dbHomeOwner.setEmail(personalInfo.getEmail());
-		dbHomeOwner.setDateOfBirth(personalInfo.getDateOfBirth());
-		dbHomeOwner.setSocialSecurityNumber(personalInfo.getSocialSecurityNumber());
-		dbHomeOwner.setAreYouRetired(personalInfo.getHasRetired() ? "Y" : "N");
-		homeOwnerRepo.save(dbHomeOwner);
-
+		Optional<HomeOwner> homeOwnerObj = homeOwnerRepo.findByUsername(homeOwner.getUsername());
+		if(homeOwnerObj.isPresent())	{
+			HomeOwner dbHomeOwner = homeOwnerObj.get();
+			dbHomeOwner.setFirstName(personalInfo.getFirstName());
+			dbHomeOwner.setLastName(personalInfo.getLastName());
+			dbHomeOwner.setEmail(personalInfo.getEmail());
+			dbHomeOwner.setDateOfBirth(personalInfo.getDateOfBirth());
+			dbHomeOwner.setSocialSecurityNumber(personalInfo.getSocialSecurityNumber());
+			dbHomeOwner.setAreYouRetired(personalInfo.getHasRetired() ? "Y" : "N");
+			homeOwnerRepo.save(dbHomeOwner);			
+		}
+		LOGGER.info("Could Not Update :" + homeOwner.getUsername());
+		throw new RuntimeException("User Not Found");
 	}
 
 	@Override

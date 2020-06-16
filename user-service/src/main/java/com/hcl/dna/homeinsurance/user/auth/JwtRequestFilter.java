@@ -15,16 +15,12 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.hcl.dna.homeinsurance.user.service.UserService;
 import com.hcl.dna.homeinsurance.user.service.UserServiceImplementation;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-
-	@Autowired
-	private UserService userService;
 
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;

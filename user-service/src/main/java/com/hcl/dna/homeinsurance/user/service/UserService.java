@@ -9,8 +9,6 @@ public interface UserService {
 
 	public HomeOwnerEntity getHomeOwnerByUsername(String username);
 
-	public String login(String username, String password);
-
 	public Long saveRegisterInfo(RegisterModel registerModel);
 
 	public void updatePersonalInformation(HomeOwnerEntity homeOwner);

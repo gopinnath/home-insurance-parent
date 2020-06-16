@@ -1,7 +1,6 @@
 package com.hcl.dna.homeinsurance.user.domain;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import com.hcl.dna.homeinsurance.user.jpa.HomeOwner;
 import com.hcl.dna.homeinsurance.user.jpa.HomeOwnerRepository;
@@ -29,8 +28,6 @@ public class HomeOwnerEntity {
 
 	public static class Factory {
 
-		private final Logger LOGGER = Logger.getLogger(Factory.class.getName());
-
 		private HomeOwnerRepository homeOwnerRepo;
 
 		private UserRepository userRepo;
@@ -47,11 +44,6 @@ public class HomeOwnerEntity {
 			if (!userObj.isPresent()) {
 				return null;
 			}
-
-			/*
-			 * if (userObj.isEmpty()) { return null; }
-			 */
-
 			Optional<HomeOwner> homeOwnerObj = homeOwnerRepo.findByUsername(username);
 			HomeOwner homeOwner = null;
 			if (homeOwnerObj.isPresent()) {
@@ -60,27 +52,6 @@ public class HomeOwnerEntity {
 
 			return buildHomeOwnerEntity(userObj.get(), homeOwner);
 
-		}
-
-		public Long registerHomeOwner(String username, String password) {
-			User user = new User();
-			user.setUsername(username);
-			user.setPassword(password);
-			userRepo.save(user);
-			return user.getUserId();
-		}
-
-		public void updatePersonalInformation(HomeOwnerEntity homeOwner) {
-			PersonalInfomationVO personalInfo = homeOwner.getPersonalInformation();
-			HomeOwner dbHomeOwner = new HomeOwner();
-			dbHomeOwner.setUsername(homeOwner.getUsername());
-			dbHomeOwner.setFirstName(personalInfo.getFirstName());
-			dbHomeOwner.setLastName(personalInfo.getLastName());
-			dbHomeOwner.setEmail(personalInfo.getEmail());
-			dbHomeOwner.setDateOfBirth(personalInfo.getDateOfBirth());
-			dbHomeOwner.setSocialSecurityNumber(personalInfo.getSocialSecurityNumber());
-			dbHomeOwner.setAreYouRetired(personalInfo.getHasRetired() ? "Y" : "N");
-			homeOwnerRepo.save(dbHomeOwner);
 		}
 
 		private HomeOwnerEntity buildHomeOwnerEntity(User user, HomeOwner homeOwner) {
