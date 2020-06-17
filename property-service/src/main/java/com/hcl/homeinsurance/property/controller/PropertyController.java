@@ -1,6 +1,7 @@
 package com.hcl.homeinsurance.property.controller;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,15 +27,18 @@ import com.hcl.homeinsurance.property.service.PropertyService;
 @RequestMapping("api/properties")
 public class PropertyController {
 	
-	  @Autowired PropertyService propertyService;
+	private static final Logger LOGGER = Logger.getLogger(PropertyController.class.getName());
 	
-	
+	@Autowired PropertyService propertyService;
+
 	@GetMapping("/")
 	public ResponseEntity<Response<?>> getAllPropertyDetails(@RequestParam Optional<Long> userId) throws PropertyNotFoundException
 	{
 		if(userId.isPresent())	{
+			LOGGER.info("User Id " + userId.get());
 			return new ResponseEntity<>(propertyService.getPropertyDetailByUserId(userId.get()),HttpStatus.OK);
 		}	else	{
+			LOGGER.info("User Id is empty.");
 			return new ResponseEntity<>(propertyService.getAllProperty(),HttpStatus.OK);	
 		}
 	}

@@ -42,35 +42,46 @@ public class PropertyServiceImpl implements PropertyService {
 
 		for (Property property : properties) {
 
-			PropertyEntity propertyEntity = null;
-			Optional<Address> address = addressRepository.findByPropertyId(property.getPropertyInformationId());
-
-			PropertyInformationVO propertyInformationVO = PropertyInformationVO.builder()
-					.dwellingStyle(property.getDwellingStyle()).numberOfFullBaths(property.getNumberOfFullBaths())
-					.numberOfHalfBaths(property.getNumberOfHalfBaths()).pool(property.getPool())
-					.roofType(property.getRoofType()).squareFootage(property.getSquareFootage())
-					.typeGarage(property.getTypeGarage()).valueOfHome(property.getValueOfHome())
-					.yearWasBuilt(property.getYearWasBuilt()).build();
-			propertyEntity = PropertyEntity.builder().propertyInformationVO(propertyInformationVO)
-					.propertyId(property.getPropertyInformationId()).build();
-			if (address.isPresent()) {
-
-				AddressVO addressVO = AddressVO.builder().address(address.get().getAddress())
-						.addressLine2(address.get().getAddressLine2()).city(address.get().getCity())
-						.resdienceType(address.get().getResdienceType()).resdienceUse(address.get().getResdienceUse())
-						.state(address.get().getState()).zip(address.get().getZip()).build();
-				propertyEntity = PropertyEntity.builder().addressVO(addressVO)
-						.propertyInformationVO(propertyInformationVO).propertyId(property.getPropertyInformationId())
-						.build();
-
-			}
-
+			PropertyEntity propertyEntity = buildEntityFromProperty(property);
 			propertyEntities.add(propertyEntity);
 
 		}
 		responseDto.setDetail(propertyEntities);
 		responseDto.setStatusCode(703);
 		return responseDto;
+	}
+
+	private PropertyEntity buildEntityFromProperty(Property property) {
+		Optional<Address> address = addressRepository.findByPropertyId(property.getPropertyInformationId());
+
+		PropertyInformationVO propertyInformationVO = PropertyInformationVO.builder()
+				.dwellingStyle(property.getDwellingStyle())
+				.numberOfFullBaths(property.getNumberOfFullBaths())
+				.numberOfHalfBaths(property.getNumberOfHalfBaths())
+				.pool(property.getPool())
+				.roofType(property.getRoofType())
+				.squareFootage(property.getSquareFootage())
+				.typeGarage(property.getTypeGarage())
+				.valueOfHome(property.getValueOfHome())
+				.yearWasBuilt(property.getYearWasBuilt())
+				.build();
+
+		if (address.isPresent()) {
+			AddressVO addressVO = AddressVO.builder().address(address.get().getAddress())
+					.addressLine2(address.get().getAddressLine2()).city(address.get().getCity())
+					.resdienceType(address.get().getResdienceType()).resdienceUse(address.get().getResdienceUse())
+					.state(address.get().getState()).zip(address.get().getZip()).build();
+			return PropertyEntity.builder()
+					.propertyInformationVO(propertyInformationVO)
+					.addressVO(addressVO)
+					.propertyId(property.getPropertyInformationId())
+					.userId(property.getUserId()).build();
+		}	else	{
+			return PropertyEntity.builder()
+					.propertyInformationVO(propertyInformationVO)
+					.propertyId(property.getPropertyInformationId())
+					.userId(property.getUserId()).build();				
+		}
 	}
 
 	@Override
@@ -81,27 +92,7 @@ public class PropertyServiceImpl implements PropertyService {
 		if (!property.isPresent())
 			throw new PropertyNotFoundException(ApplicationConstants.PROPERTY_NOT_FOUND);
 
-		PropertyInformationVO propertyInformationVO = PropertyInformationVO.builder()
-				.dwellingStyle(property.get().getDwellingStyle())
-				.numberOfFullBaths(property.get().getNumberOfFullBaths())
-				.numberOfHalfBaths(property.get().getNumberOfHalfBaths()).pool(property.get().getPool())
-				.roofType(property.get().getRoofType()).squareFootage(property.get().getSquareFootage())
-				.typeGarage(property.get().getTypeGarage()).valueOfHome(property.get().getValueOfHome())
-				.yearWasBuilt(property.get().getYearWasBuilt()).build();
-		PropertyEntity propertyEntity = PropertyEntity.builder().propertyInformationVO(propertyInformationVO)
-				.propertyId(property.get().getPropertyInformationId()).build();
-		Optional<Address> address = addressRepository.findByPropertyId(propertyId);
-
-		if (address.isPresent()) {
-			
-			AddressVO addressVO = AddressVO.builder().address(address.get().getAddress())
-					.addressLine2(address.get().getAddressLine2()).city(address.get().getCity())
-					.resdienceType(address.get().getResdienceType()).resdienceUse(address.get().getResdienceUse())
-					.state(address.get().getState()).zip(address.get().getZip()).build();
-			propertyEntity = PropertyEntity.builder().propertyInformationVO(propertyInformationVO)
-					.propertyId(property.get().getPropertyInformationId()).addressVO(addressVO).build();
-		}
-
+		PropertyEntity propertyEntity = buildEntityFromProperty(property.get());
 		responseDto.setDetail(propertyEntity);
 		responseDto.setStatusCode(701);
 		return responseDto;
@@ -254,29 +245,7 @@ public class PropertyServiceImpl implements PropertyService {
 
 		if (!property.isPresent())
 			throw new PropertyNotFoundException(ApplicationConstants.PROPERTY_NOT_FOUND);
-
-		PropertyInformationVO propertyInformationVO = PropertyInformationVO.builder()
-				.dwellingStyle(property.get().getDwellingStyle())
-				.numberOfFullBaths(property.get().getNumberOfFullBaths())
-				.numberOfHalfBaths(property.get().getNumberOfHalfBaths()).pool(property.get().getPool())
-				.roofType(property.get().getRoofType()).squareFootage(property.get().getSquareFootage())
-				.typeGarage(property.get().getTypeGarage()).valueOfHome(property.get().getValueOfHome())
-				.yearWasBuilt(property.get().getYearWasBuilt()).build();
-		PropertyEntity propertyEntity = PropertyEntity.builder().propertyInformationVO(propertyInformationVO)
-				.propertyId(property.get().getPropertyInformationId()).build();
-		
-		Optional<Address> address = addressRepository.findByPropertyId(property.get().getPropertyInformationId());
-
-		if (address.isPresent()) {
-			
-			AddressVO addressVO = AddressVO.builder().address(address.get().getAddress())
-					.addressLine2(address.get().getAddressLine2()).city(address.get().getCity())
-					.resdienceType(address.get().getResdienceType()).resdienceUse(address.get().getResdienceUse())
-					.state(address.get().getState()).zip(address.get().getZip()).build();
-			propertyEntity = PropertyEntity.builder().propertyInformationVO(propertyInformationVO)
-					.propertyId(property.get().getPropertyInformationId()).addressVO(addressVO).build();
-		}
-
+		PropertyEntity propertyEntity = buildEntityFromProperty(property.get());
 		responseDto.setDetail(propertyEntity);
 		responseDto.setStatusCode(701);
 		return responseDto;
