@@ -131,7 +131,7 @@ public class PropertyServiceImpl implements PropertyService {
 			property.setYearWasBuilt(entity.getPropertyInformationVO().getYearWasBuilt());
 			property.setUserId(entity.getUserId());
 			Property property1 = propertyRepository.save(property);
-			if (!(property1).equals(null)) {
+			if (property1 != null) {
 				propertyId = property1.getPropertyInformationId();
 				responseDto.setDetail(ApplicationConstants.REGISTERED_SUCCESS);
 				responseDto.setStatusCode(ApplicationConstants.PROPERTY_SUCCESS_CODE);
@@ -244,6 +244,41 @@ public class PropertyServiceImpl implements PropertyService {
 
 		}
 
+		return responseDto;
+	}
+
+	@Override
+	public Response<?> getPropertyDetailByUserId(Long userId) throws PropertyNotFoundException {
+		Optional<Property> property = propertyRepository.findByUserId(userId);
+		Response<PropertyEntity> responseDto = new Response<>();
+
+		if (!property.isPresent())
+			throw new PropertyNotFoundException(ApplicationConstants.PROPERTY_NOT_FOUND);
+
+		PropertyInformationVO propertyInformationVO = PropertyInformationVO.builder()
+				.dwellingStyle(property.get().getDwellingStyle())
+				.numberOfFullBaths(property.get().getNumberOfFullBaths())
+				.numberOfHalfBaths(property.get().getNumberOfHalfBaths()).pool(property.get().getPool())
+				.roofType(property.get().getRoofType()).squareFootage(property.get().getSquareFootage())
+				.typeGarage(property.get().getTypeGarage()).valueOfHome(property.get().getValueOfHome())
+				.yearWasBuilt(property.get().getYearWasBuilt()).build();
+		PropertyEntity propertyEntity = PropertyEntity.builder().propertyInformationVO(propertyInformationVO)
+				.propertyId(property.get().getPropertyInformationId()).build();
+		
+		Optional<Address> address = addressRepository.findByPropertyId(property.get().getPropertyInformationId());
+
+		if (address.isPresent()) {
+			
+			AddressVO addressVO = AddressVO.builder().address(address.get().getAddress())
+					.addressLine2(address.get().getAddressLine2()).city(address.get().getCity())
+					.resdienceType(address.get().getResdienceType()).resdienceUse(address.get().getResdienceUse())
+					.state(address.get().getState()).zip(address.get().getZip()).build();
+			propertyEntity = PropertyEntity.builder().propertyInformationVO(propertyInformationVO)
+					.propertyId(property.get().getPropertyInformationId()).addressVO(addressVO).build();
+		}
+
+		responseDto.setDetail(propertyEntity);
+		responseDto.setStatusCode(701);
 		return responseDto;
 	}
 
