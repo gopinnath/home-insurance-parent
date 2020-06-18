@@ -1,4 +1,4 @@
-package com.hcl.dna.homeinsurance.user;
+package com.hcl.homeinsurance.property;
 
 import java.util.Arrays;
 
@@ -17,10 +17,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
 @SpringBootApplication
-public class UserServiceApplication {
+public class PropertyServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UserServiceApplication.class, args);
+		SpringApplication.run(PropertyServiceApplication.class, args);
 	}
 
 	@Bean
@@ -28,11 +28,11 @@ public class UserServiceApplication {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
 				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.ant("/api/users/**"))
+				.paths(PathSelectors.ant("/api/properties/**"))
 				.build()
 				.securitySchemes(Arrays.asList(apiKey()));
 	}
-
+	
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {

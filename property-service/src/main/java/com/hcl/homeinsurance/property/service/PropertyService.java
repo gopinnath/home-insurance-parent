@@ -2,7 +2,7 @@ package com.hcl.homeinsurance.property.service;
 
 import org.springframework.stereotype.Service;
 
-import com.hcl.homeinsurance.domain.PropertyEntity;
+import com.hcl.homeinsurance.property.domain.PropertyEntity;
 import com.hcl.homeinsurance.property.dto.Response;
 import com.hcl.homeinsurance.property.exception.AddressException;
 import com.hcl.homeinsurance.property.exception.PropertyNotFoundException;

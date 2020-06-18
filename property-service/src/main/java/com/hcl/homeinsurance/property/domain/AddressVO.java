@@ -1,4 +1,4 @@
-package com.hcl.homeinsurance.domain;
+package com.hcl.homeinsurance.property.domain;
 
 
 

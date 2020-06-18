@@ -8,9 +8,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hcl.homeinsurance.domain.AddressVO;
-import com.hcl.homeinsurance.domain.PropertyEntity;
-import com.hcl.homeinsurance.domain.PropertyInformationVO;
+import com.hcl.homeinsurance.property.domain.AddressVO;
+import com.hcl.homeinsurance.property.domain.PropertyEntity;
+import com.hcl.homeinsurance.property.domain.PropertyInformationVO;
 import com.hcl.homeinsurance.property.dto.Response;
 import com.hcl.homeinsurance.property.entity.Address;
 import com.hcl.homeinsurance.property.entity.Property;
