@@ -3,11 +3,18 @@ package com.hcl.dna.homeinsurance.quote.service;
 import java.util.Calendar;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
-
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcl.dna.homeinsurance.quote.domain.CoverageEntity;
@@ -24,23 +31,20 @@ import com.hcl.dna.homeinsurance.quote.utility.QuoteUtility;
 @Service
 public class QuoteServiceImpl implements QuoteService {
 	
+	private static final String HEADER_NAME_AUTH = "Authorization";
+	
 	@Autowired
-	QuoteRepository quoteRepository;
+	private QuoteRepository quoteRepository;
 
+	@Value("${spring.microservice.property}")
+	private String propertyServiceUrl;
+	
+	
 
 	@Override
 	public Response<?> calculateCoverageDetails(long propertyId) {
-		//return CoverageEntity.newFactory(quoteRepository).getPropertyByPropertyId(propertyId);
 		Response responseDto = new Response<>();
-		
-		final String uri = "http://localhost:8080/api/properties/"+propertyId;
-		
-		RestTemplate restTemplate = new RestTemplate();
-
-		Response<PropertyEntity> res = restTemplate.getForObject(uri, Response.class);
-	
-		ObjectMapper mapper = new ObjectMapper();
-		PropertyEntity currentProperty =  mapper.convertValue(res.getDetail(), PropertyEntity.class);
+		PropertyEntity currentProperty =  getPropertyEntityByPropertyId(propertyId);
 		
 		double value =  Double.parseDouble(currentProperty.getPropertyInformationVO().getValueOfHome());
 		int year = Integer.parseInt(currentProperty.getPropertyInformationVO().getYearWasBuilt());
@@ -96,6 +100,28 @@ public class QuoteServiceImpl implements QuoteService {
 	responseDto.setDetail(coverageVO);
 	responseDto.setStatusCode(706);
 	return responseDto;
+	}
+
+
+	private PropertyEntity getPropertyEntityByPropertyId(long propertyId) {
+		final String uri = propertyServiceUrl+propertyId;
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Response> responseEntity = restTemplate.exchange(uri,HttpMethod.GET,getReqiuestEntity(), Response.class);
+		if(responseEntity.hasBody())	{
+			ObjectMapper mapper = new ObjectMapper();
+			return mapper.convertValue(responseEntity.getBody().getDetail(), PropertyEntity.class);
+		}
+		return null;
+	}
+
+
+	private HttpEntity<String> getReqiuestEntity() {
+		HttpServletRequest request = 
+		        ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes())
+		                .getRequest();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(HEADER_NAME_AUTH,request.getHeader(HEADER_NAME_AUTH));
+		return new HttpEntity<>(headers);
 	}
 
 

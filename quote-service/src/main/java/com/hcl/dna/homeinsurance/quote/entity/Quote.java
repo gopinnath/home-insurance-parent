@@ -21,23 +21,23 @@ public class Quote {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "quote_id", unique = true, nullable = false)
 	private Long quoteId;
-	@Column 
+	@Column(name = "premium")
 	private double monthlyPremuim;
-	@Column
+	@Column(name = "coverage")
 	private double dwellingCoverage;
-	@Column
+	@Column(name = "detached_structure")
 	private double detachedStructorsl;
-	@Column
+	@Column(name = "pp")
 	private double personalProperty;
-	@Column
+	@Column(name = "adle")
 	private double additional;
-	@Column
+	@Column(name = "me")
 	private int  medical;
-	@Column
+	@Column(name = "ded")
 	private double deductible;
-	@Column
+	@Column(name = "user_id")
 	private Long userId;
-	@Column
+	@Column(name = "property_id")
 	private Long propertyId;
 	
 
