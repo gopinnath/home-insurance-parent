@@ -46,6 +46,9 @@ public class Controller {
 	@Autowired
 	private UserServiceImplementation userServiceImpl;
 
+@Autowired
+	private UserServiceImplementation userServiceImpl;//Duplicate
+
 	@PostMapping(value = "/register")
 	public Long registerUser(@RequestBody RegisterModel registerModel) throws Exception {
 		LOGGER.info("Inside registerUser");
